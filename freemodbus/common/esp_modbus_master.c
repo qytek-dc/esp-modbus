@@ -94,7 +94,8 @@ esp_err_t mbc_master_send_request(mb_param_request_t* request, void* data_ptr)
                     error,
                     "Master send request failure error=(0x%x) (%s).",
                     error, esp_err_to_name(error));
-    return ESP_OK;
+//    return ESP_OK;
+    return error;
 }
 
 /**

@@ -305,5 +305,6 @@ BOOL xMBMasterPortSerialGetByte(CHAR* pucByte)
 {
     assert(pucByte != NULL);
     USHORT usLength = uart_read_bytes(ucUartNumber, (uint8_t*)pucByte, 1, MB_SERIAL_RX_TOUT_TICKS);
+    //printf("%02X ", *pucByte);
     return (usLength == 1);
 }
