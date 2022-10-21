@@ -159,6 +159,8 @@ void            xMBMasterPortSerialClose( void );
 
 void            vMBMasterPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 
+void            vMBMasterPortSerialFlushInput( void );
+
 BOOL            xMBMasterPortSerialGetByte( CHAR * pucByte );
 
 BOOL            xMBMasterPortSerialPutByte( CHAR ucByte );

@@ -228,6 +228,9 @@ eMBMasterRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength 
         pucMasterSndBufferCur[usMasterSndBufferCount++] = ( UCHAR )( usCRC16 >> 8 );
         EXIT_CRITICAL_SECTION(  );
 
+        /* Clear any data in the rx buffer */
+        vMBMasterPortSerialFlushInput();
+
         /* Activate the transmitter. */
         eSndState = STATE_M_TX_XMIT;
         

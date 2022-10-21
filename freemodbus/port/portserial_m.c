@@ -292,6 +292,11 @@ void vMBMasterPortSerialClose(void)
     ESP_ERROR_CHECK(uart_driver_delete(ucUartNumber));
 }
 
+void vMBMasterPortSerialFlushInput( void )
+{
+    uart_flush_input (ucUartNumber);
+}
+
 BOOL xMBMasterPortSerialPutByte(CHAR ucByte)
 {
     // Send one byte to UART transmission buffer
