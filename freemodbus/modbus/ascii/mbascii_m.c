@@ -219,6 +219,9 @@ eMBMasterASCIISend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLengt
         eSndState = STATE_M_TX_START;
         EXIT_CRITICAL_SECTION(  );
 
+        /* Clear any data in the rx buffer */
+        vMBMasterPortSerialFlushInput();
+
         if ( xMBMasterSerialPortSendRequest( ( UCHAR * ) pucMasterSndBufferCur, usMasterSndBufferCount ) == FALSE )
         {
             eStatus = MB_EIO;
