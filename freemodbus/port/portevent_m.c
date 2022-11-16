@@ -181,7 +181,7 @@ BOOL xMBMasterRunResTake( LONG lTimeOut )
                                     pdFALSE,            // Don't wait for both bits, either bit will do.
                                     lTimeOut);          // Resource wait timeout.
     MB_PORT_CHECK((uxBits == MB_EVENT_RESOURCE), FALSE , "Take resource failure.");
-    ESP_LOGD(MB_PORT_TAG,"%s:Take resource (%x) (%lu ticks).", __func__, uxBits,  lTimeOut);
+    ESP_LOGI(MB_PORT_TAG,"%s:Take resource (%x) (%lu ticks).", __func__, uxBits,  lTimeOut);
     return TRUE;
 }
 
@@ -193,7 +193,7 @@ void vMBMasterRunResRelease( void )
 {
     EventBits_t uxBits = xEventGroupSetBits( xResourceMasterHdl, MB_EVENT_RESOURCE );
     MB_PORT_CHECK((uxBits == MB_EVENT_RESOURCE), ; , "Resource release failure.");
-    ESP_LOGD(MB_PORT_TAG,"%s: Release resource (%x).", __func__, uxBits);
+    ESP_LOGI(MB_PORT_TAG,"%s: Release resource (%x).", __func__, uxBits);
 }
 
 /**
@@ -209,7 +209,7 @@ void vMBMasterErrorCBRespondTimeout(UCHAR ucDestAddress, const UCHAR* pucPDUData
 {
     BOOL ret = xMBMasterPortEventPost(EV_MASTER_ERROR_RESPOND_TIMEOUT);
     MB_PORT_CHECK((ret == TRUE), ; , "%s: Post event 'EV_MASTER_ERROR_RESPOND_TIMEOUT' failed!", __func__);
-    ESP_LOGD(MB_PORT_TAG,"%s:Callback respond timeout.", __func__);
+    ESP_LOGI(MB_PORT_TAG,"%s:Callback respond timeout.", __func__);
 }
 
 /**
@@ -224,8 +224,8 @@ void vMBMasterErrorCBReceiveData(UCHAR ucDestAddress, const UCHAR* pucPDUData, U
 {
     BOOL ret = xMBMasterPortEventPost(EV_MASTER_ERROR_RECEIVE_DATA);
     MB_PORT_CHECK((ret == TRUE), ; , "%s: Post event 'EV_MASTER_ERROR_RECEIVE_DATA' failed!", __func__);
-    ESP_LOGD(MB_PORT_TAG,"%s:Callback receive data timeout failure.", __func__);
-    ESP_LOG_BUFFER_HEX_LEVEL("Err rcv buf", (void*)pucPDUData, (uint16_t)ucPDULength, ESP_LOG_DEBUG);
+    ESP_LOGI(MB_PORT_TAG,"%s:Callback receive data timeout failure.", __func__);
+    ESP_LOG_BUFFER_HEX_LEVEL("Err rcv buf", (void*)pucPDUData, (uint16_t)ucPDULength, ESP_LOG_INFO);
 }
 
 /**
@@ -242,8 +242,8 @@ void vMBMasterErrorCBExecuteFunction(UCHAR ucDestAddress, const UCHAR* pucPDUDat
 {
     BOOL ret = xMBMasterPortEventPost(EV_MASTER_ERROR_EXECUTE_FUNCTION);
     MB_PORT_CHECK((ret == TRUE), ; , "%s: Post event 'EV_MASTER_ERROR_EXECUTE_FUNCTION' failed!", __func__);
-    ESP_LOGD(MB_PORT_TAG,"%s:Callback execute data handler failure.", __func__);
-    ESP_LOG_BUFFER_HEX_LEVEL("Exec func buf", (void*)pucPDUData, (uint16_t)ucPDULength, ESP_LOG_DEBUG);
+    ESP_LOGI(MB_PORT_TAG,"%s:Callback execute data handler failure.", __func__);
+    ESP_LOG_BUFFER_HEX_LEVEL("Exec func buf", (void*)pucPDUData, (uint16_t)ucPDULength, ESP_LOG_INFO);
 }
 
 /**
@@ -258,7 +258,7 @@ void vMBMasterCBRequestSuccess( void ) {
      */
     BOOL ret = xMBMasterPortEventPost(EV_MASTER_PROCESS_SUCCESS);
     MB_PORT_CHECK((ret == TRUE), ; , "%s: Post event 'EV_MASTER_PROCESS_SUCCESS' failed!", __func__);
-    ESP_LOGD(MB_PORT_TAG,"%s: Callback request success.", __func__);
+    ESP_LOGI(MB_PORT_TAG,"%s: Callback request success.", __func__);
 }
 
 /**
@@ -281,7 +281,7 @@ eMBMasterReqErrCode eMBMasterWaitRequestFinish( void ) {
                                                 portMAX_DELAY );    // Wait forever for either bit to be set.
     xRecvedEvent = (eMBMasterEventType)(uxBits);
     if (xRecvedEvent) {
-        ESP_LOGD(MB_PORT_TAG,"%s: returned event = 0x%x", __func__, xRecvedEvent);
+        ESP_LOGI(MB_PORT_TAG,"%s: returned event = 0x%x", __func__, xRecvedEvent);
         if (!(xRecvedEvent & MB_EVENT_REQ_MASK)) {
             // if we wait for certain event bits but get from poll subset
             ESP_LOGE(MB_PORT_TAG,"%s: incorrect event set = 0x%x", __func__, xRecvedEvent);
