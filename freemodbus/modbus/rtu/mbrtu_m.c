@@ -228,9 +228,6 @@ eMBMasterRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength 
         pucMasterSndBufferCur[usMasterSndBufferCount++] = ( UCHAR )( usCRC16 >> 8 );
         EXIT_CRITICAL_SECTION(  );
 
-        /* Clear any data in the rx buffer */
-        vMBMasterPortSerialFlushInput();
-
         /* Activate the transmitter. */
         eSndState = STATE_M_TX_XMIT;
         
@@ -241,6 +238,9 @@ eMBMasterRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength 
         
         // The place to enable RS485 driver
         vMBMasterPortSerialEnable( FALSE, TRUE );
+
+        /* Clear any data in the rx buffer */
+        vMBMasterPortSerialFlushInput();
     }
     else
     {
@@ -255,7 +255,7 @@ xMBMasterRTUReceiveFSM( void )
     BOOL            xStatus = FALSE;
     UCHAR           ucByte;
 
-    assert(( eSndState == STATE_M_TX_IDLE ) || ( eSndState == STATE_M_TX_XFWR ));
+    //assert(( eSndState == STATE_M_TX_IDLE ) || ( eSndState == STATE_M_TX_XFWR ));
 
     /* Always read the character. */
     xStatus = xMBMasterPortSerialGetByte( ( CHAR * ) & ucByte );
@@ -330,7 +330,7 @@ xMBMasterRTUTransmitFSM( void )
     BOOL xNeedPoll = TRUE;
     BOOL xFrameIsBroadcast = FALSE;
 
-    assert( eRcvState == STATE_M_RX_IDLE );
+    //assert( eRcvState == STATE_M_RX_IDLE );
 
     switch ( eSndState )
     {
@@ -415,6 +415,10 @@ xMBMasterRTUTimerExpired(void)
             vMBMasterSetErrorType(EV_ERROR_RESPOND_TIMEOUT);
             xNeedPoll = xMBMasterPortEventPost(EV_MASTER_ERROR_PROCESS);
         }
+
+        // DC 2022-12-01: Disable receiver if timed out
+        vMBMasterPortSerialEnable(FALSE, FALSE);
+
         break;
         /* Function called in an illegal state. */
     default:
@@ -422,7 +426,7 @@ xMBMasterRTUTimerExpired(void)
         break;
     }
     eSndState = STATE_M_TX_IDLE;
-
+    
     vMBMasterPortTimersDisable( );
     /* If timer mode is convert delay, the master event then turns EV_MASTER_EXECUTE status. */
     if (xMBMasterGetCurTimerMode() == MB_TMODE_CONVERT_DELAY) {

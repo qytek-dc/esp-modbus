@@ -236,6 +236,8 @@ static esp_err_t mbc_serial_master_send_request(mb_param_request_t* request, voi
             break;
     }
 
+    ESP_LOGD(TAG, "Modbus request completed with status = %d", mb_error);
+
     // Propagate the Modbus errors to higher level
     switch(mb_error)
     {

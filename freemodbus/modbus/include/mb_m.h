@@ -407,7 +407,7 @@ eMBMasterTimerMode xMBMasterGetCurTimerMode( void );
 BOOL xMBMasterRequestIsBroadcast( void );
 eMBMasterErrorEventType eMBMasterGetErrorType( void );
 void vMBMasterSetErrorType( eMBMasterErrorEventType errorType );
-eMBMasterReqErrCode eMBMasterWaitRequestFinish( void );
+eMBMasterReqErrCode eMBMasterWaitRequestFinish( ULONG ulTimeout );
 
 /* ----------------------- Callback -----------------------------------------*/
 

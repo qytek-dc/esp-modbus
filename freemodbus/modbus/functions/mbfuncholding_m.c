@@ -123,7 +123,7 @@ eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usRe
         ucMBFrame[MB_PDU_REQ_WRITE_VALUE_OFF + 1] = usRegData ;
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_WRITE_SIZE );
         ( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_TRANSMIT );
-        eErrStatus = eMBMasterWaitRequestFinish( );
+        eErrStatus = eMBMasterWaitRequestFinish( pdMS_TO_TICKS ( 10000 ) );
     }
     return eErrStatus;
 }
@@ -201,7 +201,7 @@ eMBMasterReqWriteMultipleHoldingRegister( UCHAR ucSndAddr,
         }
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_WRITE_MUL_SIZE_MIN + 2*usNRegs );
         ( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_TRANSMIT );
-        eErrStatus = eMBMasterWaitRequestFinish( );
+        eErrStatus = eMBMasterWaitRequestFinish( pdMS_TO_TICKS ( 10000 ) );
     }
     return eErrStatus;
 }
@@ -287,7 +287,7 @@ eMBMasterReqReadHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRe
         ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF + 1] = usNRegs;
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_READ_SIZE );
         ( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_TRANSMIT );
-        eErrStatus = eMBMasterWaitRequestFinish( );
+        eErrStatus = eMBMasterWaitRequestFinish( pdMS_TO_TICKS ( 10000 ) );
     }
     return eErrStatus;
 }
@@ -300,7 +300,7 @@ eMBMasterFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     USHORT          usRegCount;
 
     eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    eMBErrorCode    eRegStatus = MB_ENOERR;
 
     /* If this request is broadcast, and it's read mode. This request don't need execute. */
     if ( xMBMasterRequestIsBroadcast() )
@@ -340,6 +340,7 @@ eMBMasterFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
         /* Can't be a valid request because the length is incorrect. */
         eStatus = MB_EX_ILLEGAL_DATA_VALUE;
     }
+
     return eStatus;
 }
 
@@ -393,7 +394,7 @@ eMBMasterReqReadWriteMultipleHoldingRegister( UCHAR ucSndAddr,
         }
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_READWRITE_SIZE_MIN + 2*usNWriteRegs );
         ( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_TRANSMIT );
-        eErrStatus = eMBMasterWaitRequestFinish( );
+        eErrStatus = eMBMasterWaitRequestFinish( pdMS_TO_TICKS ( 10000 ) );
     }
     return eErrStatus;
 }

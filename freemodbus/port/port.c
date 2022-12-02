@@ -76,7 +76,7 @@ vMBPortSetMode( UCHAR ucMode )
 BOOL xMBPortSerialWaitEvent(QueueHandle_t xMbUartQueue, uart_event_t* pxEvent, ULONG xTimeout)
 {
     BOOL xResult = (BaseType_t)xQueueReceive(xMbUartQueue, (void*)pxEvent, (TickType_t) xTimeout);
-    ESP_LOGI(__func__, "UART event: %d ", pxEvent->type);
+    ESP_LOGD(__func__, "UART event: %d ", pxEvent->type);
     return xResult;
 }
 
@@ -148,7 +148,7 @@ prvvMBTCPLogFrame( const CHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen )
         // Append an end of frame string.
         res = snprintf( &arcBuffer[iBufPos], iBufLeft, " |" );
         if( res != -1 ) {
-            ESP_LOGI(pucMsg, "%s", arcBuffer);
+            ESP_LOGD(pucMsg, "%s", arcBuffer);
         }
     }
 }

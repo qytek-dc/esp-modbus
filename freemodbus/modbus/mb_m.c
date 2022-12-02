@@ -335,13 +335,13 @@ eMBMasterPoll( void )
             // In some cases it is possible that more than one event set
             // together (even from one subset mask) than process them consistently
             if ( MB_PORT_CHECK_EVENT( eEvent, EV_MASTER_READY ) ) {
-                ESP_LOGI(MB_PORT_TAG, "%s:EV_MASTER_READY", __func__);
+                ESP_LOGD(MB_PORT_TAG, "%s:EV_MASTER_READY", __func__);
                 MB_PORT_CLEAR_EVENT( eEvent, EV_MASTER_READY );
             } else if ( MB_PORT_CHECK_EVENT( eEvent, EV_MASTER_FRAME_TRANSMIT ) ) {
-                ESP_LOGI(MB_PORT_TAG, "%s:EV_MASTER_FRAME_TRANSMIT", __func__);
+                ESP_LOGD(MB_PORT_TAG, "%s:EV_MASTER_FRAME_TRANSMIT", __func__);
                 /* Master is busy now. */
                 vMBMasterGetPDUSndBuf( &ucMBFrame );
-                ESP_LOG_BUFFER_HEX_LEVEL("POLL transmit buffer", (void*)ucMBFrame, usMBMasterGetPDUSndLength(), ESP_LOG_INFO);
+                ESP_LOG_BUFFER_HEX_LEVEL("POLL transmit buffer", (void*)ucMBFrame, usMBMasterGetPDUSndLength(), ESP_LOG_DEBUG);
                 eStatus = peMBMasterFrameSendCur( ucMBMasterGetDestAddress(), ucMBFrame, usMBMasterGetPDUSndLength() );
                 if (eStatus != MB_ENOERR)
                 {
@@ -349,8 +349,8 @@ eMBMasterPoll( void )
                 }
                 MB_PORT_CLEAR_EVENT( eEvent, EV_MASTER_FRAME_TRANSMIT );
             } else if ( MB_PORT_CHECK_EVENT( eEvent, EV_MASTER_FRAME_SENT ) ) {
-                ESP_LOGI( MB_PORT_TAG, "%s:EV_MASTER_FRAME_SENT", __func__ );
-                ESP_LOG_BUFFER_HEX_LEVEL("POLL sent buffer", (void*)ucMBFrame, usMBMasterGetPDUSndLength(), ESP_LOG_INFO);
+                ESP_LOGD( MB_PORT_TAG, "%s:EV_MASTER_FRAME_SENT", __func__ );
+                ESP_LOG_BUFFER_HEX_LEVEL("POLL sent buffer", (void*)ucMBFrame, usMBMasterGetPDUSndLength(), ESP_LOG_DEBUG);
                 MB_PORT_CLEAR_EVENT( eEvent, EV_MASTER_FRAME_SENT );
             } else if ( MB_PORT_CHECK_EVENT( eEvent, EV_MASTER_FRAME_RECEIVED ) ) {
                 eStatus = peMBMasterFrameReceiveCur( &ucRcvAddress, &ucMBFrame, &usLength);
@@ -364,14 +364,14 @@ eMBMasterPoll( void )
                                                 )
                     {
                         ( void ) xMBMasterPortEventPost( EV_MASTER_EXECUTE );
-                        ESP_LOGI(MB_PORT_TAG, "%s: Packet data received successfully (%u).", __func__, eStatus);
-                        ESP_LOG_BUFFER_HEX_LEVEL("POLL receive buffer", (void*)ucMBFrame, (uint16_t)usLength, ESP_LOG_INFO);
+                        ESP_LOGD(MB_PORT_TAG, "%s: Packet data received successfully (%u).", __func__, eStatus);
+                        ESP_LOG_BUFFER_HEX_LEVEL("POLL receive buffer", (void*)ucMBFrame, (uint16_t)usLength, ESP_LOG_DEBUG);
                     }
                     else
                     {
                         vMBMasterSetErrorType(EV_ERROR_RECEIVE_DATA);
                         ( void ) xMBMasterPortEventPost( EV_MASTER_ERROR_PROCESS );
-                        ESP_LOGI( MB_PORT_TAG, "%s: Packet data receive failed (addr=%u)(%u).",
+                        ESP_LOGW( MB_PORT_TAG, "%s: Packet data receive failed (addr=%u)(%u).",
                                             __func__, ucRcvAddress, eStatus);
                     }
                     }
@@ -381,7 +381,7 @@ eMBMasterPoll( void )
                 {
                     return MB_EILLSTATE;
                 }
-                ESP_LOGI(MB_PORT_TAG, "%s:EV_MASTER_EXECUTE", __func__);
+                ESP_LOGD(MB_PORT_TAG, "%s:EV_MASTER_EXECUTE", __func__);
                 ucFunctionCode = ucMBFrame[MB_PDU_FUNC_OFF];
                 eException = MB_EX_ILLEGAL_FUNCTION;
                 /* If receive frame has exception. The receive function code highest bit is 1.*/
@@ -430,13 +430,13 @@ eMBMasterPoll( void )
                 {
                     if ( eMBMasterGetErrorType( ) == EV_ERROR_INIT ) {
                         vMBMasterSetErrorType(EV_ERROR_OK);
-                        ESP_LOGI( MB_PORT_TAG, "%s: set event EV_ERROR_OK", __func__ );
+                        ESP_LOGD( MB_PORT_TAG, "%s: set event EV_ERROR_OK", __func__ );
                         ( void ) xMBMasterPortEventPost( EV_MASTER_ERROR_PROCESS );
                     }
                 }
                 MB_PORT_CLEAR_EVENT( eEvent, EV_MASTER_EXECUTE );
             } else if ( MB_PORT_CHECK_EVENT( eEvent, EV_MASTER_ERROR_PROCESS ) ) {
-                ESP_LOGI( MB_PORT_TAG, "%s:EV_MASTER_ERROR_PROCESS", __func__ );
+                ESP_LOGD( MB_PORT_TAG, "%s:EV_MASTER_ERROR_PROCESS", __func__ );
                 /* Execute specified error process callback function. */
                 errorType = eMBMasterGetErrorType( );
                 vMBMasterGetPDUSndBuf( &ucMBFrame );

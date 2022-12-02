@@ -93,7 +93,7 @@ eMBMasterReqReadDiscreteInputs( UCHAR ucSndAddr, USHORT usDiscreteAddr, USHORT u
         ucMBFrame[MB_PDU_REQ_READ_DISCCNT_OFF + 1] = usNDiscreteIn;
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_READ_SIZE );
         ( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_TRANSMIT );
-        eErrStatus = eMBMasterWaitRequestFinish( );
+        eErrStatus = eMBMasterWaitRequestFinish( pdMS_TO_TICKS ( 10000 ) );
     }
     return eErrStatus;
 }

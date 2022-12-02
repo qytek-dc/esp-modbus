@@ -94,7 +94,7 @@ eMBMasterReqReadInputRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRegs
         ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF + 1] = usNRegs;
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_READ_SIZE );
         ( void ) xMBMasterPortEventPost( EV_MASTER_FRAME_TRANSMIT );
-        eErrStatus = eMBMasterWaitRequestFinish( );
+        eErrStatus = eMBMasterWaitRequestFinish( pdMS_TO_TICKS ( 10000 ) );
     }
     return eErrStatus;
 }
@@ -107,7 +107,7 @@ eMBMasterFuncReadInputRegister( UCHAR * pucFrame, USHORT * usLen )
     USHORT          usRegCount;
 
     eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    eMBErrorCode    eRegStatus = MB_ENOERR;
 
     /* If this request is broadcast, and it's read mode. This request don't need execute. */
     if ( xMBMasterRequestIsBroadcast() )
@@ -147,6 +147,7 @@ eMBMasterFuncReadInputRegister( UCHAR * pucFrame, USHORT * usLen )
         /* Can't be a valid request because the length is incorrect. */
         eStatus = MB_EX_ILLEGAL_DATA_VALUE;
     }
+
     return eStatus;
 }
 
