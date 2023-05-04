@@ -141,7 +141,7 @@ eMBMasterRTUStart( void )
      * to STATE_M_RX_IDLE. This makes sure that we delay startup of the
      * modbus protocol stack until the bus is free.
      */
-    eRcvState = STATE_M_RX_IDLE; //STATE_M_RX_INIT (We start processing immediately)
+    eRcvState = STATE_M_RX_INIT;
     vMBMasterPortSerialEnable( TRUE, FALSE );
     vMBMasterPortTimersT35Enable(  );
 
@@ -164,7 +164,7 @@ eMBMasterRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLengt
     UCHAR          *pucMBRTUFrame = ( UCHAR* ) ucMasterRTURcvBuf;
     USHORT          usFrameLength = usMasterRcvBufferPos;
 
-    if( xMBMasterSerialPortGetResponse( &pucMBRTUFrame, &usFrameLength ) == FALSE )
+    if( xMBMasterPortSerialGetResponse( &pucMBRTUFrame, &usFrameLength ) == FALSE )
     {
         return MB_EIO;
     }
@@ -230,12 +230,12 @@ eMBMasterRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength 
 
         /* Activate the transmitter. */
         eSndState = STATE_M_TX_XMIT;
-        
-        if ( xMBMasterSerialPortSendRequest( ( UCHAR * ) pucMasterSndBufferCur, usMasterSndBufferCount ) == FALSE )
+
+        if ( xMBMasterPortSerialSendRequest( ( UCHAR * ) pucMasterSndBufferCur, usMasterSndBufferCount ) == FALSE )
         {
             eStatus = MB_EIO;
         }
-        
+
         // The place to enable RS485 driver
         vMBMasterPortSerialEnable( FALSE, TRUE );
 
@@ -267,6 +267,7 @@ xMBMasterRTUReceiveFSM( void )
          */
     case STATE_M_RX_INIT:
         vMBMasterPortTimersT35Enable( );
+        ESP_LOGD("DBG", "Start initialization phase.");
         break;
 
         /* In the error state we wait until all characters in the
@@ -384,6 +385,7 @@ xMBMasterRTUTimerExpired(void)
         /* Timer t35 expired. Startup phase is finished. */
     case STATE_M_RX_INIT:
         xNeedPoll = xMBMasterPortEventPost(EV_MASTER_READY);
+        ESP_EARLY_LOGD("DBG", "RTU timer, init FSM state.");
         break;
 
         /* A frame was received and t35 expired. Notify the listener that

@@ -408,6 +408,7 @@ BOOL xMBMasterRequestIsBroadcast( void );
 eMBMasterErrorEventType eMBMasterGetErrorType( void );
 void vMBMasterSetErrorType( eMBMasterErrorEventType errorType );
 eMBMasterReqErrCode eMBMasterWaitRequestFinish( ULONG ulTimeout );
+eMBMode ucMBMasterGetCommMode( void );
 
 /* ----------------------- Callback -----------------------------------------*/
 
