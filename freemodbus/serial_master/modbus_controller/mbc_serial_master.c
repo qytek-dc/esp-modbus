@@ -570,19 +570,19 @@ eMBErrorCode eMBRegCoilsCBSerialMaster(UCHAR* pucRegBuffer, USHORT usAddress,
     if ((usRegCoilNregs >= 1)
             && (pucRegCoilsBuf != NULL)
             && (usNCoils == usRegCoilNregs)) {
-        iRegIndex = (usAddress % 8);
+        iRegIndex = 0; //  (usAddress % 8);      // DC 2023-05-19: no need to offset bit index.  Our application expects coils to start at bit 0
         switch (eMode) {
             case MB_REG_WRITE:
                 while (usCoils > 0) {
                     UCHAR ucResult = xMBUtilGetBits((UCHAR*)pucRegCoilsBuf, iRegIndex, 1);
-                    xMBUtilSetBits(pucRegBuffer, iRegIndex - (usAddress % 8) , 1, ucResult);
+                    xMBUtilSetBits(pucRegBuffer, iRegIndex/* - (usAddress % 8)*/ , 1, ucResult);
                     iRegIndex++;
                     usCoils--;
                 }
                 break;
             case MB_REG_READ:
                 while (usCoils > 0) {
-                    UCHAR ucResult = xMBUtilGetBits(pucRegBuffer, iRegIndex - (usAddress % 8), 1);
+                    UCHAR ucResult = xMBUtilGetBits(pucRegBuffer, iRegIndex/* - (usAddress % 8)*/, 1);
                     xMBUtilSetBits((uint8_t*)pucRegCoilsBuf, iRegIndex, 1, ucResult);
                     iRegIndex++;
                     usCoils--;
@@ -626,7 +626,7 @@ eMBErrorCode eMBRegDiscreteCBSerialMaster(UCHAR * pucRegBuffer, USHORT usAddress
     if ((usRegDiscreteNregs >= 1)
             && (pucRegDiscreteBuf != NULL)
             && (usNDiscrete >= 1)) {
-        iRegBitIndex = (USHORT)(usAddress) % 8; // Get bit index
+        iRegBitIndex = 0; //         (USHORT)(usAddress) % 8; // Get bit index  // DC 2023-05-19: Our application expects inputs to start at bit 0
         while (iNReg > 1)
         {
             xMBUtilSetBits(pucDiscreteInputBuf++, iRegBitIndex, 8, *pucRegBuffer++);
